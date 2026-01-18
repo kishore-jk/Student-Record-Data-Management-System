@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Record Database Management System</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    
+    <div class="login-container" id="loginScreen">
+        <div class="card login-card">
+            <h2>🔐 Login to Access System</h2>
+            <form id="loginForm">
+                <label for="userType">Select User Type</label>
+                <select id="userType" required>
+                    <option value="" disabled selected>Select Role</option>
+                    <option value="staff">Staff/Admin</option>
+                    <option value="parent">Parent</option>
+                    <option value="student">Student</option>
+                </select>
+
+                <label for="username">Username / ID</label>
+                <input type="text" id="username" placeholder="Admin, Roll No, or Parent ID" required />
+                
+                <label for="password">Password</label>
+                <div class="password-container">
+                    <input type="password" id="password" placeholder="Password" required />
+                    <button type="button" id="togglePassword" class="secondary-btn toggle-btn">👁</button>
+                </div>
+                
+                <button type="submit" class="primary-btn">Log In</button>
+                <button type="button" id="forgotPasswordBtn" class="secondary-btn forgot-btn">Forgot Password?</button>
+            </form>
+            <p id="forgotPasswordStatus" style="margin-top: 10px; font-weight: bold; font-size: 0.9em; text-align: center; color: #ff9800;"></p>
+            <p style="margin-top: 15px; font-size: 0.8em; text-align: center; line-height: 1.5;">
+                *Default Credentials:*<br>
+                Staff: ADMIN / ADMIN@1234<br>
+                Parent: parent@[Last 3 Digits of Roll] / parent@[Last 3 Digits of Roll]1234<br>
+                Student: [Roll No] / [Dept Code]@1234
+            </p>
+        </div>
+    </div>
+
+    <div class="main-app-container" id="mainApp" style="display: none;">
+        
+        <div class="header-banner">
+            <h1>📚 Student Record Manager</h1>
+            <p id="welcomeMessage">Welcome, User. You are logged in.</p>
+            <div class="header-actions">
+                <button class="secondary-btn" id="changePasswordBtn">Change Password</button>
+                <button class="secondary-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div class="password-change-container" id="passwordChangeSection" style="display: none;">
+            <div class="card password-change-card">
+                <h2>🔑 Change Password</h2>
+                <form id="changePasswordForm">
+                    <label for="newPassword">New Password</label>
+                    <input type="password" id="newPassword" required />
+                    <label for="confirmPassword">Confirm New Password</label>
+                    <input type="password" id="confirmPassword" required />
+                    <button type="submit" class="primary-btn">Update Password</button>
+                    <button type="button" class="secondary-btn" onclick="document.getElementById('passwordChangeSection').style.display='none'">Cancel</button>
+                    <p id="passwordChangeStatus" style="margin-top: 10px;"></p>
+                </form>
+            </div>
+        </div>
+        
+        <div class="container">
+            
+            <div class="card student-form-card" id="staffFormSection">
+                <h2>👤 Add / Edit Student</h2>
+                <form id="studentForm">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" placeholder="Name (e.g., KISHORE)" required />
+                    
+                    <label for="roll">Roll Number (12 Digits)</label>
+                    <input type="text" id="roll" placeholder="Roll Number (e.g., 111625104001)" required maxlength="12" />
+                    
+                    <label for="dob">Date of Birth</label>
+                    <input type="date" id="dob" required />
+
+                    <label for="gender">Gender</label>
+                    <select id="gender" required>
+                        <option value="" disabled selected>Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+
+                    <label for="dept">Select Department</label>
+                    <select id="dept" required>
+                        <option value="" disabled selected>Select Department</option>
+                        <option value="100">AI & Data Science (AI&DS)</option>
+                        <option value="101">Cyber Security (CS)</option>
+                        <option value="102">Computer Science (CSE)</option>
+                        <option value="103">Electronics/VLSI (VLSI)</option>
+                        <option value="104">Electronics & Comm. (ECE)</option>
+                    </select>
+                    
+                    <label for="year">Academic Year</label>
+                    <select id="year" required>
+                        <option value="" disabled selected>Select Academic Year</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="Passed Out">Passed Out</option>
+                    </select>
+                    
+                    <button type="submit" class="primary-btn">Register Student / Save Edit</button>
+                </form>
+            </div>
+            
+            <div class="card admin-content-card" id="adminContentSection" style="display: none;">
+                <h2>⚙ Content Management</h2>
+                
+                <form id="timetableForm">
+                    <label for="timetableSem">Semester for Timetable</label>
+                    <select id="timetableSem" required>
+                        <option value="sem1" selected>Semester 1</option>
+                        <option value="sem2">Semester 2</option>
+                        <option value="sem3">Semester 3</option>
+                        <option value="sem4">Semester 4</option>
+                        <option value="sem5">Semester 5</option>
+                        <option value="sem6">Semester 6</option>
+                        <option value="sem7">Semester 7</option>
+                        <option value="sem8">Semester 8</option>
+                    </select>
+                    <label for="timetableFile">Upload Timetable (Image: JPG/PNG)</label>
+                    <input type="file" id="timetableFile" accept="image/jpeg,image/png" required />
+                    <button type="submit" class="primary-btn" id="uploadTimetableBtn">Upload Timetable</button>
+                </form>
+                
+                <hr style="margin: 20px 0;">
+                
+                <form id="digitalContentForm">
+                     <label for="contentSem">Semester for Digital Content</label>
+                    <select id="contentSem" required>
+                        <option value="sem1" selected>Semester 1</option>
+                        <option value="sem2">Semester 2</option>
+                        <option value="sem3">Semester 3</option>
+                        <option value="sem4">Semester 4</option>
+                        <option value="sem5">Semester 5</option>
+                        <option value="sem6">Semester 6</option>
+                        <option value="sem7">Semester 7</option>
+                        <option value="sem8">Semester 8</option>
+                    </select>
+                    <label for="contentTitle">Content Title (e.g., Module 3 PDF)</label>
+                    <input type="text" id="contentTitle" required placeholder="Title" />
+                    <label for="contentFile">Upload Digital Content (PDF/Link)</label>
+                    <input type="file" id="contentFile" accept="application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+                    <input type="url" id="contentUrl" placeholder="Or paste link here" />
+                    <button type="submit" class="primary-btn" id="uploadDigitalContentBtn">Upload Digital Content</button>
+                </form>
+
+                <hr style="margin: 20px 0;">
+                
+                <h3>Password Reset Requests</h3>
+                <table id="resetRequestsTable" style="width: 100%; text-align: left; font-size: 0.9em;">
+                    <thead><tr><th>Roll No</th><th>Action</th></tr></thead>
+                    <tbody id="resetRequestsBody">
+                        <tr><td colspan="2" style="text-align: center;">No pending requests.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card marks-form-card" id="marksEntrySection" style="display: none;">
+                <h2>📝 Update Academic Records for: <span id="marksStudentName"></span></h2>
+                <form id="marksForm">
+                    <input type="hidden" id="marksStudentRoll">
+
+                    <h3>📊 Attendance (Required for Mark Calculation)</h3>
+                    <label for="totalDays">Total Working Days</label>
+                    <input type="number" id="totalDays" placeholder="Max Days (e.g., 100)" min="1" required />
+                    
+                    <label for="daysPresent">Days Present</label>
+                    <input type="number" id="daysPresent" placeholder="Days Present (e.g., 90)" min="0" required />
+
+                    <hr style="margin: 20px 0;">
+                    
+                    <h3>Select Semester for Mark Entry</h3>
+                    <label for="semesterSelect">Semester</label>
+                    <select id="semesterSelect" required onchange="loadSemesterMarks()">
+                        <option value="sem1" selected>Semester 1</option>
+                        <option value="sem2">Semester 2</option>
+                        <option value="sem3">Semester 3</option>
+                        <option value="sem4">Semester 4</option>
+                        <option value="sem5">Semester 5</option>
+                        <option value="sem6">Semester 6</option>
+                        <option value="sem7">Semester 7</option>
+                        <option value="sem8">Semester 8</option>
+                    </select>
+
+                    <hr style="margin: 20px 0;">
+
+                    <h3 id="currentSemHeader">Semester 1 Marks</h3>
+                    <div id="semesterMarksContainer">
+                        <label for="int1">Internal 1 Score (Max 100)</label>
+                        <input type="number" id="int1" placeholder="Int 1 / 100" min="0" max="100" required />
+                        
+                        <label for="int2">Internal 2 Score (Max 100)</label>
+                        <input type="number" id="int2" placeholder="Int 2 / 100" min="0" max="100" required />
+                        
+                        <label for="model">Model Exam Score (Max 100)</label>
+                        <input type="number" id="model" placeholder="Model / 100" min="0" max="100" required />
+
+                        <hr style="margin: 20px 0; border-top: 1px dashed #eee;">
+
+                        <label for="assignment">Assignment Score (Max 10)</label>
+                        <input type="number" id="assignment" placeholder="Assignment / 10" min="0" max="10" required />
+                        
+                        <label for="miniProject">Mini Project Score (Max 5)</label>
+                        <input type="number" id="miniProject" placeholder="Mini Project / 5" min="0" max="5" required />
+                        
+                        <label for="rmkNextGen">RMK NextGen Score (Max 10)</label>
+                        <input type="number" id="rmkNextGen" placeholder="RMK NextGen / 10" min="0" max="10" required />
+                        
+                        <label for="semFinal">Final Semester Exam Score (Max 100)</label>
+                        <input type="number" id="semFinal" placeholder="Final Sem / 100" min="0" max="100" required />
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="submit" class="primary-btn" id="saveMarksBtn">Save Semester 1 Records</button>
+                        <button type="button" class="secondary-btn" onclick="hideMarksEntry()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="card student-records-card">
+                <h2 id="recordsHeader">📋 Student Records</h2>
+                
+                <div id="studentDigitalContent" class="content-section" style="display: none;">
+                    <h3>Digital Content & Timetable</h3>
+                    <div id="timetableDisplay"></div>
+                    <ul id="digitalContentList"></ul>
+                    <hr>
+                </div>
+
+                <div id="chartContainer" style="margin-bottom: 30px;">
+                    <h3>Semester Performance Graph</h3>
+                    <canvas id="performanceChart"></canvas>
+                    <hr>
+                </div>
+
+                <div id="parentViewDetails" style="display: none;">
+                    <h3 id="parentChildName">Child: [Name]</h3>
+                    <table id="singleStudentDetailsTable" class="report-table">
+                        </table>
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button class="action-btn print-btn" onclick="printStudentReport(currentStudentRoll)">Print Student Report</button>
+                    </div>
+                    <hr>
+                </div>
+                
+                <table id="studentTable">
+                    <thead>
+                        <tr id="studentTableHeader"></tr>
+                    </thead>
+                    <tbody id="studentTableBody">
+                    </tbody>
+                </table>
+                <p id="noRecords" style="text-align: center; margin-top: 20px; color: #777;">No student records found. Add a new student above!</p>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="printContainer" style="display:none;"></div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
